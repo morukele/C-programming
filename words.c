@@ -1,13 +1,14 @@
 #include <stdio.h>
 
-/*
-    Count lines, words, and characters in input
-*/
 #define IN  1 /* inside a word */
 #define OUT 0 /* outside a word */
 #define BLANK ' '
 #define NEWLINE '\n'
 #define TAB '\t'
+
+/*
+    Count lines, words, and characters in input
+*/
 void count_words() {
     int c, nl, nw, nc, state;
 
