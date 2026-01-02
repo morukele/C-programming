@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-typedef struct
+typedef struct Arena
 {
     /* data */
     struct Arena *next;
@@ -19,6 +19,7 @@ Arena arena_init(size_t capacity)
         .capacity = capacity,
         .size = 0,
         .data = data,
+        .next = NULL,
     };
 
     return arena;
@@ -26,11 +27,20 @@ Arena arena_init(size_t capacity)
 
 void *arena_alloc(Arena *arena, size_t size)
 {
-    // prevent overflow
-    assert(arena->size + size < arena->capacity);
-    uint8_t *data = &arena->data[arena->size];
-    arena->size += size;
+    assert(arena->capacity >= size);
+    Arena *current = arena;
+    while (!(current->size + size < current->capacity))
+    {
+        if (current->next == NULL)
+        {
+            Arena next = arena_init(arena->capacity);
+            current->next = &next;
+        }
+        current = current->next;
+    }
 
+    uint8_t *data = &current->data[arena->size];
+    current->size += size;
     return data;
 }
 
@@ -58,8 +68,8 @@ int main()
     void *ptr1 = arena_alloc(&arena, 18);
     void *ptr2 = arena_alloc(&arena, 10);
     void *ptr3 = arena_alloc(&arena, 218);
-    // void *ptr4 = arena_alloc(&arena, 1000);
+    void *ptr4 = arena_alloc(&arena, 1000);
 
-    print_arena(&arena);
+    print_arena(&arena.next);
     arena_free(&arena);
 }
