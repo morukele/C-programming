@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 typedef struct
 {
@@ -22,6 +23,13 @@ void append(Vector *vector, int32_t value)
     vector->data[vector->lenght++] = value;
 }
 
+void pop(Vector *vector)
+{
+    assert(vector->lenght > 0 && "Vector should have a lenght > 0 to pop");
+    vector->data[vector->lenght] = 0;
+    vector->lenght--;
+}
+
 int main()
 {
     Vector vector = {0};
@@ -30,6 +38,9 @@ int main()
     {
         append(&vector, i);
     }
+
+    pop(&vector);
+    pop(&vector);
 
     for (int i = 0; i < vector.lenght; i++)
     {
